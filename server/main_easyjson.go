@@ -36,8 +36,13 @@ func easyjson89aae3efDecodeGithubComSickyoonCelerycrawlerServer(in *jlexer.Lexer
 			continue
 		}
 		switch key {
-		case "random_string":
-			out.RandomString = string(in.String())
+		case "random_byte":
+			if in.IsNull() {
+				in.Skip()
+				out.Data = nil
+			} else {
+				out.Data = in.Bytes()
+			}
 		case "created_at":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.CreatedAt).UnmarshalJSON(data))
@@ -60,8 +65,8 @@ func easyjson89aae3efEncodeGithubComSickyoonCelerycrawlerServer(out *jwriter.Wri
 		out.RawByte(',')
 	}
 	first = false
-	out.RawString("\"random_string\":")
-	out.String(string(in.RandomString))
+	out.RawString("\"random_byte\":")
+	out.Base64Bytes(in.Data)
 	if !first {
 		out.RawByte(',')
 	}

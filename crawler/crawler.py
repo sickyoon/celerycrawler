@@ -8,15 +8,20 @@ import uvloop
 
 parser = argparse.ArgumentParser(description='Run aiohttp/uvloop benchmark')
 parser.add_argument('--endpoint', type=str, default='http://localhost:9000/json', help='endpoint url to hit')
-parser.add_argument('--num_iter', type=int, default=10, help='test iterations')
+parser.add_argument('--num_iter', type=int, default=10000, help='test iterations')
 
-async def run(url):
-    async with aiohttp.ClientSession() as session:
+async def fetch(url, session, sem):
+    async with sem:
         async with session.get(url) as resp:
             return await resp.json()
 
 async def main(loop, args):
-    await asyncio.gather(*[run(args.endpoint) for _ in repeat(None, args.num_iter)], loop=loop)
+    futures = []
+    sem = asyncio.Semaphore(1000, loop=self.loop)
+    async with aiohttp.ClientSession() as session:
+        for _ in repeat(None, args.num_iter):
+            futures.append(fetch(args.endpoint, session, sem))
+        await asyncio.gather(*futures, loop=loop)
 
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -25,6 +30,5 @@ if __name__ == '__main__':
     loop.run_until_complete(
         main(loop, args)
     )
-    end = time.perf_counter()
-    print(end-start)
+    print(time.perf_counter()-start)
 
