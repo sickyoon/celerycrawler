@@ -17,7 +17,6 @@ class CeleryClient:
         )
         jobs().get()
         return time.perf_counter() - start
-    
 
 if __name__ == '__main__':
     c = CeleryClient(

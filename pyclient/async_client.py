@@ -7,7 +7,8 @@ import uvloop
 
 class AsyncClient:
 
-    def __init__(self, loop, endpoint, num_iter):
+    def __init__(self, endpoint, num_iter):
+        loop = uvloop.new_event_loop()
         self.sem = asyncio.Semaphore(1000, loop=loop)
         self.loop = loop
         self.endpoint = endpoint
@@ -33,9 +34,7 @@ class AsyncClient:
         return time.perf_counter() - start
 
 if __name__ == '__main__':
-    loop = uvloop.new_event_loop()
     c = AsyncClient(
-        loop=loop,
         endpoint='http://localhost:9000/json',
         num_iter=10000
     )

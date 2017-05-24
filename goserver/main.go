@@ -60,8 +60,6 @@ func main() {
 	flag.Parse()
 	router := httprouter.New()
 	router.GET("/json", jsonResponse)
-	//h := handlers.RecoveryHandler()(router)
-	//h = handlers.LoggingHandler(os.Stdout, h)
 	l, err := net.Listen("tcp", ":"+strconv.Itoa(*port))
 	if err != nil {
 		log.Fatalf("listening failed %v", err)
